@@ -6,6 +6,8 @@ target 'NewsApi' do
   use_frameworks!
   
   pod 'Alamofire'
+  pod 'Kingfisher', '6.2.1'
+  pod 'ObjectMapper'
   pod 'SkeletonView'
 
   # Pods for NewsApi
