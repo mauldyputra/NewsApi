@@ -8,6 +8,6 @@
 import Foundation
 
 protocol APIService {
-    func fetchNewsHeadlines(completion: @escaping (Result<[NewsCategory], Error>) -> Void)
-    func fetchNewsCategories(completion: @escaping (Result<[NewsCategory], Error>) -> Void)
+    func fetchNewsByCategories(completion: @escaping (Result<[NewsCategory], Error>) -> Void)
+    func fetchNewsSources(completion: @escaping (Result<[NewsSource], Error>) -> Void)
 }

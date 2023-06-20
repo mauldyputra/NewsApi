@@ -7,21 +7,36 @@
 
 import UIKit
 
-protocol NewsViewInterface: AnyObject {
-    var presenter: NewsPresenterInterface? { get set }
+protocol NewsCategoryViewInterface: AnyObject {
+    var presenterCategory: NewsCategoryPresenterInterface? { get set }
+}
+
+protocol NewsSourceViewInterface: AnyObject {
+    var presenterSource: NewsSourcePresenterInterface? { get set }
+    
+    func update(with sources: [NewsSource])
+    func update(with error: String)
+}
+
+protocol NewsArticleViewInterface: AnyObject {
+    var presenterArticle: NewsArticlePresenterInterface? { get set }
     
     func update(with news: [NewsCategory])
     func update(with error: String)
 }
 
-class NewsCategoriesController: UIViewController, NewsViewInterface {
+class NewsCategoriesController: UIViewController, NewsCategoryViewInterface, NewsSourceViewInterface, NewsArticleViewInterface {
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var navBar: UINavigationBar!
     
     var newsCategories: [NewsCategory] = []
+    var newsSources: [NewsSource] = []
+    var selectedCategory: Category = .business
     var newsType: NewsEnum = .categories
-    var presenter: NewsPresenterInterface?
+    var presenterCategory: NewsCategoryPresenterInterface?
+    var presenterSource: NewsSourcePresenterInterface?
+    var presenterArticle: NewsArticlePresenterInterface?
     var refreshControl: UIRefreshControl!
     
     override func viewDidLoad() {
@@ -34,6 +49,7 @@ class NewsCategoriesController: UIViewController, NewsViewInterface {
             setupNavBar(title: "News Sources")
         case .articles:
             setupNavBar(title: "News Articles")
+            NewsUserDefaults.setNewsCategoryKey(selectedCategory.value)
         }
         
         setupTableView()
@@ -41,8 +57,6 @@ class NewsCategoriesController: UIViewController, NewsViewInterface {
     
     func setupNavBar(title: String) {
         let navigationItem = UINavigationItem(title: title)
-        let reloadButton = UIBarButtonItem(image: UIImage(named: "options-outline"), style: .plain, target: self, action: #selector(self.showMoreCategory(_:)))
-        navigationItem.rightBarButtonItem = reloadButton
         
         navBar.prefersLargeTitles = true
         navBar.setItems([navigationItem], animated: false)
@@ -57,65 +71,45 @@ class NewsCategoriesController: UIViewController, NewsViewInterface {
         tableView.registerNIB(with: NewsSourceCell.self)
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.reloadData()
         
-        self.refreshControl = UIRefreshControl()
-        self.refreshControl.backgroundColor = .clear
-        self.refreshControl.tintColor = .black
-        
-        self.refreshControl.addTarget(self, action: #selector(pullToRefresh), for: .valueChanged)
-        
-        self.tableView.addSubview(self.refreshControl)
+        if newsType != .categories {
+            refreshControl = UIRefreshControl()
+            refreshControl.backgroundColor = .clear
+            refreshControl.tintColor = .black
+            
+            refreshControl.addTarget(self, action: #selector(pullToRefresh), for: .valueChanged)
+            
+            self.tableView.addSubview(refreshControl)
+        }
     }
     
     @objc func pullToRefresh(sender: AnyObject) {
         self.refreshControl?.beginRefreshing()
-        self.newsCategories = []
-        self.presenter?.refreshData(completion: {
-            self.refreshControl.endRefreshing()
-        })
+        switch newsType {
+        case .categories:
+            print("This is not fetch")
+        case .sources:
+            self.newsSources = []
+            self.presenterSource?.refreshData(completion: {
+                self.refreshControl.endRefreshing()
+            })
+        case .articles:
+            self.newsCategories = []
+            self.presenterArticle?.refreshData(completion: {
+                self.refreshControl.endRefreshing()
+            })
+        }
     }
     
-    @objc func showMoreCategory(_ sender: UIBarButtonItem) {
-        let alert = UIAlertController(title: "Other Categories", message: "Choose news category", preferredStyle: .actionSheet)
-        
-        alert.addAction(UIAlertAction(title: Category.business.value, style: .default , handler:{ (UIAlertAction)in
-//            self.presenter.didSelectOtherCategory("technology")
-        }))
-        
-        alert.addAction(UIAlertAction(title: Category.entertainment.value, style: .default , handler:{ (UIAlertAction)in
-//            self.presenter.didSelectOtherCategory("sport")
-        }))
-        
-        alert.addAction(UIAlertAction(title: Category.general.value, style: .default , handler:{ (UIAlertAction)in
-//            self.presenter.didSelectOtherCategory("politics")
-        }))
-        
-        alert.addAction(UIAlertAction(title: Category.health.value, style: .default , handler:{ (UIAlertAction)in
-//            self.presenter.didSelectOtherCategory("business")
-        }))
-        
-        alert.addAction(UIAlertAction(title: Category.science.value, style: .default , handler:{ (UIAlertAction)in
-//            self.presenter.didSelectOtherCategory("others")
-        }))
-        
-        alert.addAction(UIAlertAction(title: Category.sports.value, style: .default , handler:{ (UIAlertAction)in
-//            self.presenter.didSelectOtherCategory("others")
-        }))
-        
-        alert.addAction(UIAlertAction(title: Category.technology.value, style: .default , handler:{ (UIAlertAction)in
-//            self.presenter.didSelectOtherCategory("others")
-        }))
-        
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler:{ (UIAlertAction)in
-        }))
-        
-        self.present(alert, animated: true, completion: {
-            
-        })
+    func update(with sources: [NewsSource]) {
+        DispatchQueue.main.async {
+            self.newsSources.append(contentsOf: sources)
+            self.tableView.reloadData()
+        }
     }
     
     func update(with news: [NewsCategory]) {
-        print("Success fetch news")
         DispatchQueue.main.async {
             self.newsCategories.append(contentsOf: news)
             self.tableView.reloadData()
@@ -129,12 +123,33 @@ class NewsCategoriesController: UIViewController, NewsViewInterface {
 
 extension NewsCategoriesController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return newsCategories.count
+        switch newsType {
+        case .categories:
+            return Category.allCases.count
+        case .sources:
+            return newsSources.count
+        default:
+            return newsCategories.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch newsType {
-        case .categories, .articles :
+        case .categories:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "NewsSourceCell", for: indexPath) as! NewsSourceCell
+            cell.configure(title: Category.allCases[indexPath.row].value)
+            cell.selectionStyle = .none
+            self.tableView.separatorStyle = .singleLine
+            
+            return cell
+        case .sources:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "NewsSourceCell", for: indexPath) as! NewsSourceCell
+            cell.configure(title: newsSources[indexPath.row].name)
+            cell.selectionStyle = .none
+            self.tableView.separatorStyle = .singleLine
+            
+            return cell
+        default:
             if newsCategories.isEmpty == false {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "NewsCategoryCell", for: indexPath) as! NewsCategoryCell
                 cell.configure(data: newsCategories[indexPath.row])
@@ -142,23 +157,26 @@ extension NewsCategoriesController: UITableViewDelegate, UITableViewDataSource {
                 
                 if indexPath.row > newsCategories.count - 2,
                    tableView.indexPathsForVisibleRows?.contains(IndexPath(row: indexPath.row - 2, section: indexPath.section)) ?? false {
-                    self.presenter?.loadMoreData()
+                    self.presenterArticle?.loadMoreData()
                 }
                 
                 return cell
             } else {
                 return UITableViewCell()
             }
-        default:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "NewsSourceCell", for: indexPath) as! NewsSourceCell
-            cell.configure(title: newsCategories[indexPath.row].source?.name)
-            cell.selectionStyle = .none
-            
-            return cell
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        switch newsType {
+        case .categories:
+            selectedCategory = Category.allCases[indexPath.row]
+            NewsUserDefaults.setNewsCategoryKey(Category.allCases[indexPath.row].value)
+            print("didSelect category")
+        case .sources:
+            print("didSelect source")
+        default:
+            print("didSelect article")
+        }
     }
 }

@@ -7,64 +7,14 @@
 
 import Foundation
 
-enum FetchError: Error {
-    case failed
-}
-
-protocol NewsPresenterInterface {
+protocol NewsCategoryPresenterInterface {
     var router: RouterInterface? { get set }
     var interactor: NewsInteractorInterface? { get set }
-    var view: NewsViewInterface? { get set }
-    
-    func fetchNews(with result: Result<[NewsCategory], Error>)
-    func fetchLoadMore(with result: Result<[NewsCategory], Error>)
-    func loadMoreData()
-    func refreshData(completion: (() -> Void?))
+    var view: NewsCategoryViewInterface? { get set }
 }
 
-class NewsPresenter: NewsPresenterInterface {
-    
+class NewsCategoryPresenter: NewsCategoryPresenterInterface {
     var router: RouterInterface?
-    
-    var interactor: NewsInteractorInterface? {
-        didSet {
-            interactor?.fetchNews()
-        }
-    }
-    
-    var loadMoreInteractor: NewsInteractorInterface? {
-        didSet {
-            interactor?.loadMoreData()
-        }
-    }
-    
-    var view: NewsViewInterface?
-    
-    func fetchNews(with result: Result<[NewsCategory], Error>) {
-        switch result {
-        case .success(let success):
-            view?.update(with: success)
-        case .failure:
-            view?.update(with: "Failed to Fetch")
-        }
-    }
-    
-    func fetchLoadMore(with result: Result<[NewsCategory], Error>) {
-        switch result {
-        case .success(let success):
-            view?.update(with: success)
-        case .failure:
-            view?.update(with: "Failed to Fetch")
-        }
-    }
-    
-    func loadMoreData() {
-        interactor?.loadMoreData()
-    }
-    
-    func refreshData(completion: (() -> Void?)) {
-        page = 1
-        interactor?.fetchNews()
-        completion()
-    }
+    var interactor: NewsInteractorInterface?
+    var view: NewsCategoryViewInterface?
 }

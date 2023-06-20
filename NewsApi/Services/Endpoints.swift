@@ -22,14 +22,19 @@ enum Endpoints {
     
     enum News: Endpoint {
         
-        case headline
         case category(category: String)
+        case source(category: String?)
         
         public var path: String {
             switch self {
-            case .headline: return "/top-headlines?country=id&category=technology&apiKey=\(API.apiKey)"
             case .category(let category):
-                return "/top-headlines?country=id&category=\(category)&apiKey=\(API.apiKey)"
+                return "/top-headlines?&category=\(category)&apiKey=\(API.apiKey)"
+            case .source(let category):
+                if let category {
+                    return "/top-headlines/sources?category=\(category)&apiKey=\(API.apiKey)"
+                } else {
+                    return "/top-headlines/sources?apiKey=\(API.apiKey)"
+                }
             }
         }
         

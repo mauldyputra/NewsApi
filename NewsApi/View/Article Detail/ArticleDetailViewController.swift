@@ -8,16 +8,27 @@
 import UIKit
 import WebKit
 
-class ArticleDetailViewController: UIViewController {
+protocol ArticleDetailViewInterface: AnyObject {
+    var presenterArticleDetail: ArticleDetailPresenterInterface? { get set }
+    
+    func update(with url: String)
+}
+
+class ArticleDetailViewController: UIViewController, ArticleDetailViewInterface {
     
     @IBOutlet weak var webView: WKWebView!
     
+    var presenterArticleDetail: ArticleDetailPresenterInterface?
     var url: String? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupViews()
+    }
+    
+    func update(with url: String) {
+        self.url = url
     }
     
     private func setupViews() {

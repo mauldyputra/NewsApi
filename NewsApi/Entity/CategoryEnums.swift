@@ -7,16 +7,31 @@
 
 import Foundation
 
-enum Category: String {
-    case business = "Business"
-    case entertainment = "Entertainment"
-    case general = "General"
-    case health = "Health"
-    case science = "Science"
-    case sports = "Sports"
-    case technology = "Technology"
+enum Category: CaseIterable {
+    case business
+    case entertainment
+    case general
+    case health
+    case science
+    case sports
+    case technology
     
     var value: String {
-        return self.rawValue
+        switch self {
+        case .business:
+            return "Business"
+        case .entertainment:
+            return "Entertainment"
+        case .general:
+            return "General"
+        case .health:
+            return "Health"
+        case .science:
+            return "Science"
+        case .sports:
+            return "Sports"
+        case .technology:
+            return "Technology"
+        }
     }
 }
