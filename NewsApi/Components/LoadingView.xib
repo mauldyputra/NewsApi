@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21679"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="zkN-Pz-szd" customClass="LoadingView" customModule="NewsApi" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <view alpha="0.5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oVL-a3-LpY">
+                    <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0uL-gA-cyR" customClass="ASSpinnerView" customModule="ASSpinnerView">
+                    <rect key="frame" x="166.66666666666666" y="396" width="60" height="60"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="60" id="Kt3-Eu-CCf"/>
+                        <constraint firstAttribute="width" constant="60" id="hrM-KL-Sit"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="xrR-BR-eHG"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="oVL-a3-LpY" firstAttribute="leading" secondItem="xrR-BR-eHG" secondAttribute="leading" id="XTV-be-22u"/>
+                <constraint firstItem="0uL-gA-cyR" firstAttribute="centerY" secondItem="zkN-Pz-szd" secondAttribute="centerY" id="Y4M-qU-VML"/>
+                <constraint firstItem="0uL-gA-cyR" firstAttribute="centerX" secondItem="zkN-Pz-szd" secondAttribute="centerX" id="d2O-6Q-Sb6"/>
+                <constraint firstItem="oVL-a3-LpY" firstAttribute="top" secondItem="zkN-Pz-szd" secondAttribute="top" id="d3y-Rf-qme"/>
+                <constraint firstAttribute="bottom" secondItem="oVL-a3-LpY" secondAttribute="bottom" id="kNl-r9-Fy9"/>
+                <constraint firstItem="xrR-BR-eHG" firstAttribute="trailing" secondItem="oVL-a3-LpY" secondAttribute="trailing" id="ke6-Hz-MkW"/>
+            </constraints>
+            <connections>
+                <outlet property="spinner" destination="0uL-gA-cyR" id="GUc-YS-qma"/>
+            </connections>
+            <point key="canvasLocation" x="64.885496183206101" y="-267.6056338028169"/>
+        </view>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

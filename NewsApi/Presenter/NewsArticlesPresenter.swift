@@ -8,50 +8,54 @@
 import Foundation
 
 protocol NewsArticlePresenterInterface {
-    var router: RouterInterface? { get set }
+    var router: NewsRouter? { get set }
     var interactor: NewsInteractorInterface? { get set }
     var view: NewsArticleViewInterface? { get set }
     
-    func fetchNewsByCategories(with result: Result<[NewsCategory], Error>)
-    func fetchLoadMore(with result: Result<[NewsCategory], Error>)
+    func fetchArticles(with result: Result<[NewsModel], Error>)
+    func fetchLoadMore(with result: Result<[NewsModel], Error>)
+    func searchArticle(completion: (() -> Void)?)
     func loadMoreData()
     func refreshData(completion: (() -> Void?))
+    func didSelectArticle(view: NewsArticleViewInterface, url: String)
 }
 
 class NewsArticlePresenter: NewsArticlePresenterInterface {
     
-    var router: RouterInterface?
+    var router: NewsRouter?
     
     var interactor: NewsInteractorInterface? {
         didSet {
-            interactor?.fetchSources()
+            interactor?.fetchArticles()
         }
     }
     
-    var loadMoreInteractor: NewsInteractorInterface? {
-        didSet {
-            interactor?.loadMoreData()
-        }
-    }
+    var loadMoreInteractor: NewsInteractorInterface?
     
     var view: NewsArticleViewInterface?
     
-    func fetchNewsByCategories(with result: Result<[NewsCategory], Error>) {
+    func fetchArticles(with result: Result<[NewsModel], Error>) {
         switch result {
         case .success(let success):
             view?.update(with: success)
-        case .failure:
-            view?.update(with: "Failed to Fetch")
+        case .failure(let error):
+            view?.update(with: error.localizedDescription)
         }
     }
     
-    func fetchLoadMore(with result: Result<[NewsCategory], Error>) {
+    func fetchLoadMore(with result: Result<[NewsModel], Error>) {
         switch result {
         case .success(let success):
-            view?.update(with: success)
-        case .failure:
-            view?.update(with: "Failed to Fetch")
+            view?.updateLoadMore(with: success)
+        case .failure(let error):
+            view?.update(with: error.localizedDescription)
         }
+    }
+    
+    func searchArticle(completion: (() -> Void)?) {
+        page = 1
+        interactor?.fetchArticles()
+        completion?()
     }
     
     func loadMoreData() {
@@ -60,7 +64,11 @@ class NewsArticlePresenter: NewsArticlePresenterInterface {
     
     func refreshData(completion: (() -> Void?)) {
         page = 1
-        interactor?.fetchNewsByCategories()
+        interactor?.fetchArticles()
         completion()
+    }
+    
+    func didSelectArticle(view: NewsArticleViewInterface, url: String) {
+        interactor?.routeToArticleDetail(view: view, url: url)
     }
 }

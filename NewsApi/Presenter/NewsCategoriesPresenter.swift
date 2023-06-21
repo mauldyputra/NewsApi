@@ -8,13 +8,19 @@
 import Foundation
 
 protocol NewsCategoryPresenterInterface {
-    var router: RouterInterface? { get set }
+    var router: NewsRouter? { get set }
     var interactor: NewsInteractorInterface? { get set }
     var view: NewsCategoryViewInterface? { get set }
+    
+    func didSelectCategory(view: NewsCategoryViewInterface)
 }
 
 class NewsCategoryPresenter: NewsCategoryPresenterInterface {
-    var router: RouterInterface?
+    var router: NewsRouter?
     var interactor: NewsInteractorInterface?
     var view: NewsCategoryViewInterface?
+    
+    func didSelectCategory(view: NewsCategoryViewInterface) {
+        interactor?.routeToSource(view: view)
+    }
 }

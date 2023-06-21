@@ -23,7 +23,6 @@ class ArticleDetailViewController: UIViewController, ArticleDetailViewInterface 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupViews()
     }
     

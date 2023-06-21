@@ -8,92 +8,96 @@
 import Foundation
 import UIKit
 
-typealias EntryPoint = UIViewController
-
-protocol RouterInterface: AnyObject {
-    var entry: EntryPoint? { get }
-    static func initial() -> RouterInterface
-    static func source() -> RouterInterface
-    static func article() -> RouterInterface
-    static func detail() -> RouterInterface
+// MARK: Router Input (Presenter -> Router)
+protocol PresenterToRouterQuotesProtocol: AnyObject {
+    
+    static func createCategoriesModule() -> UINavigationController
+    static func createSourcesModule() -> UIViewController
+    static func createArticlesModule() -> UIViewController
+    static func createArticleDetailModule(with url: String) -> UIViewController
+    
+    func pushToSource(on view: NewsCategoryViewInterface)
+    func pushToArticle(on view: NewsSourceViewInterface)
+    func pushToArticleDetail(on view: NewsArticleViewInterface, with url: String)
 }
 
-class Router: RouterInterface {
-    var entry: EntryPoint?
-    
-    static func initial() -> RouterInterface {
-        let router = Router()
+class NewsRouter: PresenterToRouterQuotesProtocol {
+    static func createCategoriesModule() -> UINavigationController {
+        let viewController = NewsCategoriesController()
+        let navigationController = UINavigationController(rootViewController: viewController)
         
-        var view: NewsCategoryViewInterface = NewsCategoriesController()
-        var presenter: NewsCategoryPresenterInterface = NewsCategoryPresenter()
-        var interactor: NewsInteractorInterface = NewsInteractor()
+        let presenter: NewsCategoryPresenterInterface = NewsCategoryPresenter()
         
-        view.presenterCategory = presenter
-        interactor.presenterCategory = presenter
+        viewController.presenterCategory = presenter
+        viewController.presenterCategory?.router = NewsRouter()
+        viewController.presenterCategory?.view = viewController
+        viewController.presenterCategory?.interactor = NewsInteractor()
+        viewController.presenterCategory?.interactor?.presenterCategory = presenter
         
-        presenter.router = router
-        presenter.view = view
-        presenter.interactor = interactor
-        
-        router.entry = view as? EntryPoint
-        
-        return router
+        return navigationController
     }
     
-    static func source() -> RouterInterface {
-        let router = Router()
+    static func createSourcesModule() -> UIViewController {
+        let viewController = NewsSourcesController()
         
-        var view: NewsSourceViewInterface = NewsCategoriesController()
-        var presenter: NewsSourcePresenterInterface = NewsSourcePresenter()
-        var interactor: NewsInteractorInterface = NewsInteractor()
-
-        view.presenterSource = presenter
-        interactor.presenterSource = presenter
-
-        presenter.router = router
-        presenter.view = view
-        presenter.interactor = interactor
-
-        router.entry = view as? EntryPoint
+        let presenter: NewsSourcePresenterInterface = NewsSourcePresenter()
         
-        return router
+        viewController.presenterSource = presenter
+        viewController.presenterSource?.router = NewsRouter()
+        viewController.presenterSource?.view = viewController
+        viewController.presenterSource?.interactor = NewsInteractor()
+        viewController.presenterSource?.interactor?.presenterSource = presenter
+        
+        return viewController
     }
     
-    static func article() -> RouterInterface {
-        let router = Router()
+    static func createArticlesModule() -> UIViewController {
+        let viewController = NewsArticlesController()
         
-        var view: NewsArticleViewInterface = NewsCategoriesController()
-        var presenter: NewsArticlePresenterInterface = NewsArticlePresenter()
-        var interactor: NewsInteractorInterface = NewsInteractor()
-
-        view.presenterArticle = presenter
-        interactor.presenterArticle = presenter
-
-        presenter.router = router
-        presenter.view = view
-        presenter.interactor = interactor
-
-        router.entry = view as? EntryPoint
+        let presenter: NewsArticlePresenterInterface = NewsArticlePresenter()
         
-        return router
+        viewController.presenterArticle = presenter
+        viewController.presenterArticle?.router = NewsRouter()
+        viewController.presenterArticle?.view = viewController
+        viewController.presenterArticle?.interactor = NewsInteractor()
+        viewController.presenterArticle?.interactor?.presenterArticle = presenter
+        
+        return viewController
     }
     
-    static func detail() -> RouterInterface {
-        let router = Router()
+    static func createArticleDetailModule(with url: String) -> UIViewController {
+        let viewController = ArticleDetailViewController()
         
-        var view: ArticleDetailViewInterface = ArticleDetailViewController()
-        var presenter: ArticleDetailPresenterInterface = ArticleDetailPresenter()
-        var interactor: NewsInteractorInterface = NewsInteractor()
+        let presenter: ArticleDetailPresenterInterface = ArticleDetailPresenter()
         
-        view.presenterArticleDetail = presenter
-        interactor.presenterArticleDetail = presenter
+        viewController.presenterArticleDetail = presenter
+        viewController.presenterArticleDetail?.router = NewsRouter()
+        viewController.presenterArticleDetail?.view = viewController
+        viewController.presenterArticleDetail?.interactor = NewsInteractor()
+        viewController.presenterArticleDetail?.url = url
+        viewController.presenterArticleDetail?.interactor?.presenterArticleDetail = presenter
         
-        presenter.router = router
-        presenter.view = view
-        presenter.interactor = interactor
-        
-        router.entry = view as? EntryPoint
-        
-        return router
+        return viewController
+    }
+    
+    func pushToSource(on view: NewsCategoryViewInterface) {
+        let sourceViewController = NewsRouter.createSourcesModule()
+            
+        let viewController = view as! NewsCategoriesController
+        viewController.navigationController?.pushViewController(sourceViewController, animated: true)
+    }
+    
+    func pushToArticle(on view: NewsSourceViewInterface) {
+        let articleViewController = NewsRouter.createArticlesModule()
+            
+        let viewController = view as! NewsSourcesController
+        viewController.navigationController?.pushViewController(articleViewController, animated: true)
+    }
+    
+    func pushToArticleDetail(on view: NewsArticleViewInterface, with url: String) {
+        let articleDetailViewController = NewsRouter.createArticleDetailModule(with: url)
+            
+        let viewController = view as! NewsArticlesController
+        viewController.navigationController?.pushViewController(articleDetailViewController, animated: true)
     }
 }

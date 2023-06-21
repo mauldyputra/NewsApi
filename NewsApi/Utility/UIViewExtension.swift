@@ -47,4 +47,9 @@ extension UIView {
             return layer.cornerRadius
         }
     }
+    
+    static func nib<T: UIView>(withType type: T.Type, name: String? = nil) -> T {
+        let _name = name ?? String(describing: type)
+        return Bundle.main.loadNibNamed(_name, owner: self, options: nil)?.first as! T
+    }
 }

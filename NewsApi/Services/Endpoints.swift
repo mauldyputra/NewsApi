@@ -9,7 +9,7 @@ import Foundation
 
 struct API {
     static let baseUrl = "http://newsapi.org/"
-    static let apiKey = "8008cacaf3fa44f3b6b5f26f1cb624d4"
+    static let apiKey = "1f9bf7d4d97a42d2b64dfc2b27f7970b"
 }
 
 
@@ -22,13 +22,17 @@ enum Endpoints {
     
     enum News: Endpoint {
         
-        case category(category: String)
+        case article(source: String, page: Int, pageSize: Int, search: String?)
         case source(category: String?)
         
         public var path: String {
             switch self {
-            case .category(let category):
-                return "/top-headlines?&category=\(category)&apiKey=\(API.apiKey)"
+            case .article(let source, let page, let pageSize, let search):
+                if let search {
+                    return "/top-headlines?sources=\(source)&page=\(page)&pageSize=\(pageSize)&q=\(search)&apiKey=\(API.apiKey)"
+                } else {
+                    return "/top-headlines?sources=\(source)&page=\(page)&pageSize=\(pageSize)&apiKey=\(API.apiKey)"
+                }
             case .source(let category):
                 if let category {
                     return "/top-headlines/sources?category=\(category)&apiKey=\(API.apiKey)"

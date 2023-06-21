@@ -8,7 +8,7 @@
 import Foundation
 import ObjectMapper
 
-class NewsCategory: Mappable {
+class NewsModel: Mappable {
     var source: NewsSource?
     var author: String?
     var title: String?

@@ -8,29 +8,23 @@
 import Foundation
 
 protocol NewsSourcePresenterInterface {
-    var router: RouterInterface? { get set }
+    var router: NewsRouter? { get set }
     var interactor: NewsInteractorInterface? { get set }
     var view: NewsSourceViewInterface? { get set }
     
     func fetchSources(with result: Result<[NewsSource], Error>)
     func refreshData(completion: (() -> Void?))
+    
+    func didSelectSource(view: NewsSourceViewInterface)
 }
 
 class NewsSourcePresenter: NewsSourcePresenterInterface {
     
-    var router: RouterInterface?
+    var router: NewsRouter?
     
-    var interactor: NewsInteractorInterface? {
-        didSet {
-            interactor?.fetchSources()
-        }
-    }
+    var interactor: NewsInteractorInterface?
     
-    var loadMoreInteractor: NewsInteractorInterface? {
-        didSet {
-            interactor?.loadMoreData()
-        }
-    }
+    var loadMoreInteractor: NewsInteractorInterface?
     
     var view: NewsSourceViewInterface?
     
@@ -38,13 +32,17 @@ class NewsSourcePresenter: NewsSourcePresenterInterface {
         switch result {
         case .success(let success):
             view?.update(with: success)
-        case .failure:
-            view?.update(with: "Failed to Fetch")
+        case .failure(let error):
+            view?.update(with: error.localizedDescription)
         }
     }
     
     func refreshData(completion: (() -> Void?)) {
         interactor?.fetchSources()
         completion()
+    }
+    
+    func didSelectSource(view: NewsSourceViewInterface) {
+        interactor?.routeToArticle(view: view)
     }
 }

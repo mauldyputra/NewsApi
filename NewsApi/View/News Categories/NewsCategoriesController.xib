@@ -21,28 +21,33 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ccx-Fd-iSA">
-                    <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                    <rect key="frame" x="0.0" y="50" width="393" height="43"/>
                     <items>
                         <navigationItem title="Title" id="djc-dL-IoI"/>
                     </items>
                 </navigationBar>
-                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="e6f-bt-TcS">
-                    <rect key="frame" x="0.0" y="103" width="393" height="715"/>
-                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                </tableView>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="rpu-C9-Mcj">
+                    <rect key="frame" x="0.0" y="93" width="393" height="759"/>
+                    <subviews>
+                        <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="e6f-bt-TcS">
+                            <rect key="frame" x="0.0" y="0.0" width="393" height="759"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        </tableView>
+                    </subviews>
+                </stackView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
-                <constraint firstItem="ccx-Fd-iSA" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="983-Ar-Lip"/>
-                <constraint firstItem="e6f-bt-TcS" firstAttribute="top" secondItem="ccx-Fd-iSA" secondAttribute="bottom" id="C6k-kY-Gbn"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="e6f-bt-TcS" secondAttribute="trailing" id="Kz3-4y-nm8"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="e6f-bt-TcS" secondAttribute="bottom" id="RZF-ba-RbX"/>
-                <constraint firstItem="ccx-Fd-iSA" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="ar3-mR-q4C"/>
-                <constraint firstItem="e6f-bt-TcS" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="j39-9a-Sy2"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="ccx-Fd-iSA" secondAttribute="trailing" id="psU-Ky-cTi"/>
+                <constraint firstItem="rpu-C9-Mcj" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="1SE-sP-NOQ"/>
+                <constraint firstItem="rpu-C9-Mcj" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="Dt5-Jw-5PL"/>
+                <constraint firstItem="ccx-Fd-iSA" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="50" id="bg3-ek-daI"/>
+                <constraint firstItem="ccx-Fd-iSA" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="nui-7o-4H1"/>
+                <constraint firstItem="ccx-Fd-iSA" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="pW9-Fv-QcJ"/>
+                <constraint firstAttribute="bottom" secondItem="rpu-C9-Mcj" secondAttribute="bottom" id="sFO-NF-k9j"/>
+                <constraint firstItem="rpu-C9-Mcj" firstAttribute="top" secondItem="ccx-Fd-iSA" secondAttribute="bottom" id="sfA-5W-F9t"/>
             </constraints>
-            <point key="canvasLocation" x="49" y="21"/>
+            <point key="canvasLocation" x="48.091603053435115" y="20.422535211267608"/>
         </view>
     </objects>
     <resources>
