@@ -69,7 +69,12 @@ extension NewsCategoriesController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("didSelect category")
         selectedCategory = Category.allCases[indexPath.row]
-        NewsUserDefaults.setNewsCategoryKey(selectedCategory.value)
+        if selectedCategory.value.lowercased() == Category.all.value.lowercased() {
+            NewsUserDefaults.setNewsCategoryKey(nil)
+        } else {
+            NewsUserDefaults.setNewsCategoryKey(selectedCategory.value)
+        }
+        
         presenterCategory?.didSelectCategory(view: self)
     }
 }

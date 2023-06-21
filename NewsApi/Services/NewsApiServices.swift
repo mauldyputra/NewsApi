@@ -33,8 +33,8 @@ final class NewsApiServices: APIService {
     }
     
     func fetchNewsSources(completion: @escaping (Result<[NewsSource], Error>) -> Void) {
-        print("URL: ", Endpoints.News.source(category: NewsUserDefaults.getNewsCategoryKey()).url)
-        AF.request(Endpoints.News.source(category: NewsUserDefaults.getNewsCategoryKey()).url, method: .get)
+        print("URL: ", Endpoints.News.source(category: NewsUserDefaults.getNewsCategoryKey(), page: page, pageSize: pageSize).url)
+        AF.request(Endpoints.News.source(category: NewsUserDefaults.getNewsCategoryKey(), page: page, pageSize: pageSize).url, method: .get)
             .validate()
             .response { response in
                 switch response.result {

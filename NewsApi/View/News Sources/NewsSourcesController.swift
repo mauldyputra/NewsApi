@@ -9,8 +9,10 @@ import UIKit
 
 protocol NewsSourceViewInterface: AnyObject {
     var presenterSource: NewsSourcePresenterInterface? { get set }
+    var hasMore: Bool? { get set }
     
     func update(with sources: [NewsSource])
+    func updateLoadMore(with sources: [NewsSource])
     func update(with error: String)
 }
 
@@ -24,6 +26,7 @@ class NewsSourcesController: UIViewController, NewsSourceViewInterface {
     @IBOutlet weak var titleEmptyView: UILabel!
     
     var presenterSource: NewsSourcePresenterInterface?
+    var hasMore: Bool? = false
     var refreshControl: UIRefreshControl!
     var newsSources: [NewsSource] = []
     
@@ -57,6 +60,7 @@ class NewsSourcesController: UIViewController, NewsSourceViewInterface {
         tableView.registerNIB(with: NewsSourceCell.self)
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.separatorStyle = .singleLine
         tableView.reloadData()
         
         refreshControl = UIRefreshControl()
@@ -87,6 +91,18 @@ class NewsSourcesController: UIViewController, NewsSourceViewInterface {
     func update(with sources: [NewsSource]) {
         setIsLoadingWithAlpha(true)
         DispatchQueue.main.async {
+            self.hasMore = sources.count == pageSize
+            self.newsSources.append(contentsOf: sources)
+            self.configureEmptyView()
+            self.tableView.reloadData()
+            self.setIsLoadingWithAlpha(false)
+        }
+    }
+    
+    func updateLoadMore(with sources: [NewsSource]) {
+        setIsLoadingWithAlpha(true)
+        DispatchQueue.main.async {
+            self.hasMore = sources.count == pageSize
             self.newsSources.append(contentsOf: sources)
             self.configureEmptyView()
             self.tableView.reloadData()
@@ -111,18 +127,26 @@ extension NewsSourcesController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "NewsSourceCell", for: indexPath) as! NewsSourceCell
-        cell.configure(title: newsSources[indexPath.row].name)
-        cell.selectionStyle = .none
-        self.tableView.separatorStyle = .singleLine
-        
-        return cell
+        if newsSources.isEmpty == false {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "NewsSourceCell", for: indexPath) as! NewsSourceCell
+            cell.configure(title: newsSources[indexPath.row].name)
+            cell.selectionStyle = .none
+            
+            if indexPath.row > newsSources.count - 2,
+               tableView.indexPathsForVisibleRows?.contains(IndexPath(row: indexPath.row - 2, section: indexPath.section)) ?? false, hasMore == true {
+                presenterSource?.loadMoreData()
+            }
+            
+            return cell
+        } else {
+            return UITableViewCell()
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("didSelect source")
         guard let id = newsSources[indexPath.row].id else {
-            print("Source id is nil")
+            AlertView().showAlert(title: "Sorry!", message: "Source id is nil", viewController: self)
             return
         }
         NewsUserDefaults.setNewsSourceKey(id)
@@ -137,7 +161,7 @@ extension NewsSourcesController: UISearchBarDelegate {
         self.setIsLoadingWithAlpha(true)
         print("search source")
         guard let text = searchBar.text else {
-            
+            AlertView().showAlert(title: "Sorry!", message: "Your text can't be read", viewController: self)
             return
         }
         newsSources = newsSources.filter{ $0.name?.lowercased().contains(text.lowercased()) == true }

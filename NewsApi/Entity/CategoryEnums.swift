@@ -8,6 +8,7 @@
 import Foundation
 
 enum Category: CaseIterable {
+    case all
     case business
     case entertainment
     case general
@@ -18,6 +19,8 @@ enum Category: CaseIterable {
     
     var value: String {
         switch self {
+        case .all:
+            return "All"
         case .business:
             return "Business"
         case .entertainment:

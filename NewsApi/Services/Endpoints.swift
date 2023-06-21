@@ -23,7 +23,7 @@ enum Endpoints {
     enum News: Endpoint {
         
         case article(source: String, page: Int, pageSize: Int, search: String?)
-        case source(category: String?)
+        case source(category: String?, page: Int, pageSize: Int)
         
         public var path: String {
             switch self {
@@ -33,11 +33,11 @@ enum Endpoints {
                 } else {
                     return "/top-headlines?sources=\(source)&page=\(page)&pageSize=\(pageSize)&apiKey=\(API.apiKey)"
                 }
-            case .source(let category):
+            case .source(let category, let page, let pageSize):
                 if let category {
-                    return "/top-headlines/sources?category=\(category)&apiKey=\(API.apiKey)"
+                    return "/top-headlines/sources?category=\(category)&page=\(page)&pageSize=\(pageSize)&apiKey=\(API.apiKey)"
                 } else {
-                    return "/top-headlines/sources?apiKey=\(API.apiKey)"
+                    return "/top-headlines/sources?&page=\(page)&pageSize=\(pageSize)&apiKey=\(API.apiKey)"
                 }
             }
         }

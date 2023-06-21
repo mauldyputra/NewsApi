@@ -13,8 +13,9 @@ protocol NewsSourcePresenterInterface {
     var view: NewsSourceViewInterface? { get set }
     
     func fetchSources(with result: Result<[NewsSource], Error>)
+    func fetchLoadMore(with result: Result<[NewsSource], Error>)
+    func loadMoreData()
     func refreshData(completion: (() -> Void?))
-    
     func didSelectSource(view: NewsSourceViewInterface)
 }
 
@@ -35,6 +36,19 @@ class NewsSourcePresenter: NewsSourcePresenterInterface {
         case .failure(let error):
             view?.update(with: error.localizedDescription)
         }
+    }
+    
+    func fetchLoadMore(with result: Result<[NewsSource], Error>) {
+        switch result {
+        case .success(let success):
+            view?.updateLoadMore(with: success)
+        case .failure(let error):
+            view?.update(with: error.localizedDescription)
+        }
+    }
+    
+    func loadMoreData() {
+        interactor?.loadMoreDataSource()
     }
     
     func refreshData(completion: (() -> Void?)) {

@@ -16,7 +16,8 @@ protocol NewsInteractorInterface {
     var url: String? { get set }
     func fetchSources()
     func fetchArticles()
-    func loadMoreData()
+    func loadMoreDataSource()
+    func loadMoreDataArticle()
     func routeToSource(view: NewsCategoryViewInterface)
     func routeToArticle(view: NewsSourceViewInterface)
     func routeToArticleDetail(view: NewsArticleViewInterface, url: String)
@@ -34,7 +35,10 @@ class NewsInteractor: NewsInteractorInterface {
     
     var url: String? {
         didSet {
-            guard let url = url else { return }
+            guard let url = url else {
+                print("url is nil")
+                return
+            }
             self.presenterArticleDetail?.url = url
         }
     }
@@ -61,7 +65,19 @@ class NewsInteractor: NewsInteractorInterface {
         }
     }
     
-    func loadMoreData() {
+    func loadMoreDataSource() {
+        page += 1
+        apiService.fetchNewsSources() { [weak self] response in
+            switch response {
+            case .success(let success):
+                self?.presenterSource?.fetchLoadMore(with: .success(success))
+            case .failure:
+                self?.presenterSource?.fetchLoadMore(with: .failure(FetchError.failed))
+            }
+        }
+    }
+    
+    func loadMoreDataArticle() {
         page += 1
         apiService.fetchNewsArticles() { [weak self] response in
             switch response {

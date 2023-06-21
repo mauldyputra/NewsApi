@@ -60,6 +60,7 @@ class NewsArticlesController: UIViewController, NewsArticleViewInterface {
         tableView.registerNIB(with: NewsSourceCell.self)
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.separatorStyle = .singleLine
         tableView.reloadData()
         
         refreshControl = UIRefreshControl()
@@ -146,6 +147,7 @@ extension NewsArticlesController: UITableViewDelegate, UITableViewDataSource {
         print("didSelect article")
         guard let url = newsArticles[indexPath.row].url else {
             print("url is nil")
+            AlertView().showAlert(title: "Sorry!", message: "url is nil", viewController: self)
             return
         }
         

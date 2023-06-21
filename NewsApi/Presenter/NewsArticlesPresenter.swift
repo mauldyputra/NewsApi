@@ -55,7 +55,7 @@ class NewsArticlePresenter: NewsArticlePresenterInterface {
     }
     
     func loadMoreData() {
-        interactor?.loadMoreData()
+        interactor?.loadMoreDataArticle()
     }
     
     func refreshData(completion: (() -> Void?)) {

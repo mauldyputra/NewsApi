@@ -23,7 +23,10 @@ class ArticleDetailPresenter: ArticleDetailPresenterInterface {
     
     var url: String? {
         didSet {
-            guard let url = url else { return }
+            guard let url = url else {
+                print("url is nil")
+                return
+            }
             view?.update(with: url)
         }
     }
