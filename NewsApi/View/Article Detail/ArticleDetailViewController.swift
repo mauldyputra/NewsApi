@@ -33,6 +33,7 @@ class ArticleDetailViewController: UIViewController, ArticleDetailViewInterface 
     private func setupViews() {
         guard let url = self.url else {
             AlertView().showAlert(title: "Sorry!", message: "url is nil", viewController: self)
+            self.navigationController?.popViewController(animated: true)
             return
         }
         let link = URL(string: url)!

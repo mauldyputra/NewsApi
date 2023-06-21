@@ -26,12 +26,26 @@ class NewsArticleCell: UITableViewCell {
     func configure(data: NewsModel) {
         newsImage.setImage(url: data.urlToImage)
         titleLabel.text = data.title
-        sourceLabel.text = "Source: \(data.source?.name ?? "-")"
+        sourceLabel.isHidden = true
         authorLabel.isHidden = true
+        descriptionLabel.isHidden = true
+        
+        if let source = data.source {
+            authorLabel.isHidden = false
+            sourceLabel.text = "Source: \(source)"
+        }
         if let author = data.author {
             authorLabel.isHidden = false
             authorLabel.text = "Author: \(author)"
         }
-        descriptionLabel.text = data.content
+        
+        if let description = data.description {
+            descriptionLabel.isHidden = false
+            if description.isHTML {
+                descriptionLabel.sethtml(description)
+            } else {
+                descriptionLabel.text = description
+            }
+        }
     }
 }
