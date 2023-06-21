@@ -9,7 +9,7 @@ import Foundation
 
 struct API {
     static let baseUrl = "http://newsapi.org/"
-    static let apiKey = "1f9bf7d4d97a42d2b64dfc2b27f7970b"
+    static let apiKey = "face311600f24459955ddc7e753f4798"
 }
 
 

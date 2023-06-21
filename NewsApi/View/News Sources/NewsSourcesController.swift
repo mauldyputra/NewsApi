@@ -31,6 +31,7 @@ class NewsSourcesController: UIViewController, NewsSourceViewInterface {
         super.viewDidLoad()
         setupView()
         setIsLoadingWithAlpha(true)
+        page = 1
         presenterSource?.interactor?.fetchSources()
     }
     

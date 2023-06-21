@@ -9,6 +9,7 @@ import UIKit
 
 protocol NewsArticleViewInterface: AnyObject {
     var presenterArticle: NewsArticlePresenterInterface? { get set }
+    var hasMore: Bool? { get set }
     
     func update(with news: [NewsModel])
     func updateLoadMore(with news: [NewsModel])
@@ -25,6 +26,7 @@ class NewsArticlesController: UIViewController, NewsArticleViewInterface {
     @IBOutlet weak var titleEmptyView: UILabel!
     
     var presenterArticle: NewsArticlePresenterInterface?
+    var hasMore: Bool? = false
     var refreshControl: UIRefreshControl!
     var newsArticles: [NewsModel] = []
     
@@ -32,6 +34,7 @@ class NewsArticlesController: UIViewController, NewsArticleViewInterface {
         super.viewDidLoad()
         setupView()
         setIsLoadingWithAlpha(true)
+        page = 1
         presenterArticle?.interactor?.fetchArticles()
     }
     
@@ -84,20 +87,22 @@ class NewsArticlesController: UIViewController, NewsArticleViewInterface {
         })
     }
     
-    func update(with sources: [NewsModel]) {
+    func update(with news: [NewsModel]) {
         setIsLoadingWithAlpha(true)
         DispatchQueue.main.async {
-            self.newsArticles.append(contentsOf: sources)
+            self.hasMore = news.count == pageSize
+            self.newsArticles.append(contentsOf: news)
             self.configureEmptyView()
             self.tableView.reloadData()
             self.setIsLoadingWithAlpha(false)
         }
     }
     
-    func updateLoadMore(with sources: [NewsModel]) {
+    func updateLoadMore(with news: [NewsModel]) {
         setIsLoadingWithAlpha(true)
         DispatchQueue.main.async {
-            self.newsArticles.append(contentsOf: sources)
+            self.hasMore = news.count == pageSize
+            self.newsArticles.append(contentsOf: news)
             self.configureEmptyView()
             self.tableView.reloadData()
             self.setIsLoadingWithAlpha(false)
@@ -127,7 +132,7 @@ extension NewsArticlesController: UITableViewDelegate, UITableViewDataSource {
             cell.selectionStyle = .none
             
             if indexPath.row > newsArticles.count - 2,
-               tableView.indexPathsForVisibleRows?.contains(IndexPath(row: indexPath.row - 2, section: indexPath.section)) ?? false {
+               tableView.indexPathsForVisibleRows?.contains(IndexPath(row: indexPath.row - 2, section: indexPath.section)) ?? false, hasMore == true {
                 presenterArticle?.loadMoreData()
             }
             

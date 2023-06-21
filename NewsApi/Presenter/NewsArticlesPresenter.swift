@@ -24,11 +24,7 @@ class NewsArticlePresenter: NewsArticlePresenterInterface {
     
     var router: NewsRouter?
     
-    var interactor: NewsInteractorInterface? {
-        didSet {
-            interactor?.fetchArticles()
-        }
-    }
+    var interactor: NewsInteractorInterface? 
     
     var loadMoreInteractor: NewsInteractorInterface?
     
